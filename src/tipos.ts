@@ -29,7 +29,14 @@ export interface ResultadoGeocoding {
   timezone?: string;
 }
 
-// Datos actuales ya normalizados y listos para mostrar.
+export interface PronosticoDiario {
+  fecha: string;
+  codigoClima: number | null;
+  maxima: number | null;
+  minima: number | null;
+}
+
+// Datos actuales y pronóstico ya normalizados y listos para mostrar.
 export interface Clima {
   temperatura: number;
   sensacion: number;
@@ -42,6 +49,7 @@ export interface Clima {
   minima: number | null;
   unidadTemperatura: string;
   unidadViento: string;
+  pronostico: PronosticoDiario[];
 }
 
 // Respuesta cruda de la Forecast API de OpenMeteo.
@@ -61,7 +69,9 @@ export interface RespuestaForecast {
   current_units?: Record<string, string>;
   current?: ClimaActualRespuesta;
   daily?: {
-    temperature_2m_max?: number[];
-    temperature_2m_min?: number[];
+    time?: string[];
+    weather_code?: (number | null)[];
+    temperature_2m_max?: (number | null)[];
+    temperature_2m_min?: (number | null)[];
   };
 }

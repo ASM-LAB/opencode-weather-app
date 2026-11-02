@@ -134,6 +134,44 @@ export function mostrarTarjeta(ciudad: Ciudad, clima: Clima): void {
   fila("Hoy:", hoy);
   fila("Actualizado:", `${hora} (hora local)`);
   console.log(LINEA);
+  mostrarPronostico(clima);
+  console.log(LINEA);
+}
+
+function mostrarPronostico(clima: Clima): void {
+  console.log("  Pronóstico: próximos 7 días");
+  if (clima.pronostico.length === 0) {
+    console.log("    — Pronóstico no disponible.");
+    return;
+  }
+
+  for (const dia of clima.pronostico) {
+    const descripcion = dia.codigoClima === null
+      ? "—"
+      : descripcionClima(dia.codigoClima);
+    const maxima = dia.maxima === null
+      ? "—"
+      : formatearTemperatura(dia.maxima, clima.unidadTemperatura);
+    const minima = dia.minima === null
+      ? "—"
+      : formatearTemperatura(dia.minima, clima.unidadTemperatura);
+
+    console.log(`  ${formatearFecha(dia.fecha)} · ${descripcion}`);
+    console.log(`    Máx ${maxima} / Mín ${minima}`);
+  }
+}
+
+function formatearFecha(fecha: string): string {
+  // UTC conserva la fecha local recibida sin desplazarla a la zona del equipo.
+  const dia = new Date(`${fecha}T00:00:00Z`);
+  if (Number.isNaN(dia.getTime())) {
+    return "—";
+  }
+  const semana = dia.toLocaleDateString("es", {
+    weekday: "short",
+    timeZone: "UTC",
+  });
+  return `${semana} ${fecha.slice(8, 10)}/${fecha.slice(5, 7)}`;
 }
 
 export function aviso(mensaje: string): void {

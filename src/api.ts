@@ -1,4 +1,4 @@
-// Cliente de las APIs de OpenMeteo: geocodificación y pronóstico actual.
+// Cliente de las APIs de OpenMeteo: geocodificación, clima actual y pronóstico.
 
 import type {
   Ciudad,
@@ -54,7 +54,8 @@ export async function obtenerClima(
       "weather_code",
       "is_day",
     ].join(","),
-    daily: "temperature_2m_max,temperature_2m_min",
+    daily: "weather_code,temperature_2m_max,temperature_2m_min",
+    forecast_days: "8",
     timezone: "auto",
     temperature_unit: unidad,
     wind_speed_unit: "kmh",
@@ -84,6 +85,13 @@ export async function obtenerClima(
     minima: datos.daily?.temperature_2m_min?.[0] ?? null,
     unidadTemperatura,
     unidadViento: datos.current_units?.wind_speed_10m ?? "km/h",
+    // El primer día corresponde a hoy en la zona horaria de la ciudad.
+    pronostico: (datos.daily?.time ?? []).slice(1, 8).map((fecha, indice) => ({
+      fecha,
+      codigoClima: datos.daily?.weather_code?.[indice + 1] ?? null,
+      maxima: datos.daily?.temperature_2m_max?.[indice + 1] ?? null,
+      minima: datos.daily?.temperature_2m_min?.[indice + 1] ?? null,
+    })),
   };
 }
 

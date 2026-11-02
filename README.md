@@ -47,6 +47,10 @@ Esta es la apariencia que deseamos crear
   Selecciona una opción: 5
 ```
 
-## Colores
+## Pronóstico de 7 días
+
+Las opciones de clima de la ciudad predeterminada y de todas las ciudades incluyen el clima actual y el pronóstico de los próximos siete días, desde mañana según la fecha local de cada ciudad. Cada día muestra fecha, condición meteorológica, máxima y mínima, en la unidad seleccionada (°C o °F). Los datos que no estén disponibles aparecen como `—`.
+
+## Colores de la interfaz
 
 La interfaz usa colores ANSI: menú en cyan, temperaturas en amarillo, mensajes de éxito en verde y avisos o errores en rojo. Se desactivan automáticamente cuando la salida no es una terminal o cuando defines `NO_COLOR`; puedes forzarlos con `FORCE_COLOR=1`.
