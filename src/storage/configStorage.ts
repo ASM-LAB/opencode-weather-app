@@ -3,7 +3,8 @@ import { join } from "node:path";
 import type { Ciudad } from "../types/City.ts";
 import type { Configuracion, Unidad } from "../types/Settings.ts";
 
-const RUTA_CONFIG = join(homedir(), ".weather-cli.json");
+const RUTA_CONFIG =
+  process.env.WEATHER_CONFIG_PATH ?? join(homedir(), ".weather-cli.json");
 
 const CONFIG_POR_DEFECTO: Configuracion = {
   unidad: "celsius",
@@ -11,12 +12,12 @@ const CONFIG_POR_DEFECTO: Configuracion = {
   ciudades: [],
 };
 
-export function rutaConfig(): string {
-  return RUTA_CONFIG;
+export function rutaConfig(ruta = RUTA_CONFIG): string {
+  return ruta;
 }
 
-export async function cargarConfig(): Promise<Configuracion> {
-  const archivo = Bun.file(RUTA_CONFIG);
+export async function cargarConfig(ruta = RUTA_CONFIG): Promise<Configuracion> {
+  const archivo = Bun.file(ruta);
   if (!(await archivo.exists())) {
     return { ...CONFIG_POR_DEFECTO, ciudades: [] };
   }
@@ -26,13 +27,16 @@ export async function cargarConfig(): Promise<Configuracion> {
     return normalizarConfig(datos);
   } catch {
     // Si el archivo está corrupto, lo respaldamos y empezamos de cero.
-    await respaldarConfig();
+    await respaldarConfig(ruta);
     return { ...CONFIG_POR_DEFECTO, ciudades: [] };
   }
 }
 
-export async function guardarConfig(config: Configuracion): Promise<void> {
-  await Bun.write(RUTA_CONFIG, JSON.stringify(config, null, 2));
+export async function guardarConfig(
+  config: Configuracion,
+  ruta = RUTA_CONFIG,
+): Promise<void> {
+  await Bun.write(ruta, JSON.stringify(config, null, 2));
 }
 
 function normalizarConfig(datos: Partial<Configuracion>): Configuracion {
@@ -69,10 +73,10 @@ function esCiudad(valor: unknown): valor is Ciudad {
   );
 }
 
-async function respaldarConfig(): Promise<void> {
+async function respaldarConfig(ruta: string): Promise<void> {
   try {
-    const contenido = await Bun.file(RUTA_CONFIG).text();
-    await Bun.write(`${RUTA_CONFIG}.bak`, contenido);
+    const contenido = await Bun.file(ruta).text();
+    await Bun.write(`${ruta}.bak`, contenido);
   } catch {
     // Si no se puede respaldar, continuamos con la configuración por defecto.
   }

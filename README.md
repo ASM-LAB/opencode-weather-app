@@ -54,3 +54,19 @@ Las opciones de clima de la ciudad predeterminada y de todas las ciudades incluy
 ## Colores de la interfaz
 
 La interfaz usa colores ANSI: menú en cyan, temperaturas en amarillo, mensajes de éxito en verde y avisos o errores en rojo. Se desactivan automáticamente cuando la salida no es una terminal o cuando defines `NO_COLOR`; puedes forzarlos con `FORCE_COLOR=1`.
+
+## Pruebas y compilación
+
+Las pruebas automáticas usan el ejecutor integrado de Bun y no requieren servicios externos:
+
+```bash
+bun run test
+```
+
+La compilación ejecuta primero toda la suite y solo genera el binario si las pruebas pasan:
+
+```bash
+bun run build
+```
+
+La variable opcional `WEATHER_CONFIG_PATH` permite indicar la ruta del archivo de configuración, por ejemplo para aislar ejecuciones de prueba. Si no se define, se usa `~/.weather-cli.json`.
