@@ -1,16 +1,23 @@
 # AGENTS.md
 
 ## Project state
-Early Bun/TypeScript scaffold for a Spanish-language weather CLI ("WEATHER CLI"). `index.ts` is the only source file and still prints `Hello via Bun!`. Planned flow: OpenMeteo geocoding (`geocoding-api.open-meteo.com/v1/search`) to get lat/lon, then `api.open-meteo.com/v1/forecast?current=temperature_2m`. README describes the target menu and features; see `README.md` for the exact API URLs and UI mock.
+Weather CLI implemented with Bun/TypeScript. `index.ts` is the entry point and delegates to `src/`:
+
+- `src/api.ts`: OpenMeteo geocoding (`geocoding-api.open-meteo.com/v1/search`) and forecast (`api.open-meteo.com/v1/forecast`) clients.
+- `src/config.ts`: persistence of cities and settings in `~/.weather-cli.json`.
+- `src/ui.ts`: menu, prompts, weather card and Spanish WMO descriptions.
+- `src/tipos.ts`: shared types.
+
+The menu follows the mock in `README.md` (options 1–5, 8, 9).
 
 ## Commands
 - Install: `bun install` (Bun 1.4.4+; `bun.lock` is the lockfile — do not use npm/pnpm).
 - Run: `bun index.ts` (or `bun run index.ts`).
 - Typecheck: `bun run typecheck` → `bun check` (Bun's native checker, strict `tsconfig.json`).
 - Single-file typecheck: `bun check index.ts`.
-- Build a standalone binary (end goal, no script yet): `bun build --compile ./index.ts --outfile weather`.
+- Build a standalone binary: `bun run build` → `bun build --compile ./index.ts --outfile weather` (creates `weather.exe` on Windows).
 
-There are **no** `dev`, `start`, `test`, or `lint` scripts in `package.json`, even though `bun-instructions.md` claims them. Trust `package.json`. No tests exist yet.
+There are **no** `dev`, `start`, `test`, or `lint` scripts in `package.json`, even though `bun-instructions.md` claims them. Trust `package.json`. No automated tests are committed; the app has been verified with `bun run typecheck` and manual end-to-end runs of every menu option.
 
 ## Toolchain notes
 - Bun executes TypeScript directly; there is no build step for development and `tsconfig.json` sets `noEmit`.
