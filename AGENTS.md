@@ -4,6 +4,7 @@
 Weather CLI implemented with Bun/TypeScript. `index.ts` is the entry point and delegates to `src/`:
 
 - `src/api.ts`: OpenMeteo geocoding (`geocoding-api.open-meteo.com/v1/search`) and forecast (`api.open-meteo.com/v1/forecast`) clients.
+- `src/colores.ts`: ANSI color helpers, disabled when output is not a TTY or `NO_COLOR` is set.
 - `src/config.ts`: persistence of cities and settings in `~/.weather-cli.json`.
 - `src/ui.ts`: menu, prompts, weather card and Spanish WMO descriptions.
 - `src/tipos.ts`: shared types.

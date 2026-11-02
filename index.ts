@@ -9,6 +9,7 @@ import {
   guardarConfig,
 } from "./src/config.ts";
 import { buscarCiudades, obtenerClima } from "./src/api.ts";
+import { cyan, rojo } from "./src/colores.ts";
 import {
   aviso,
   cerrarUi,
@@ -34,7 +35,7 @@ async function main(): Promise<void> {
 async function cicloMenu(config: Configuracion): Promise<void> {
   while (true) {
     imprimirMenu(config.ciudades.length, config.unidad);
-    const opcion = await preguntar("  Selecciona una opción: ");
+    const opcion = await preguntar(cyan("  Selecciona una opción: "));
 
     switch (opcion) {
       case "1":
@@ -269,6 +270,6 @@ function mensajeError(error: unknown): string {
 }
 
 main().catch((error: unknown) => {
-  console.error(`\n  Error inesperado: ${mensajeError(error)}`);
+  console.error(rojo(`\n  Error inesperado: ${mensajeError(error)}`));
   process.exitCode = 1;
 });

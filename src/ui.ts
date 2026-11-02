@@ -2,6 +2,7 @@
 
 import { createInterface } from "node:readline/promises";
 import { stdin as entrada, stdout as salida } from "node:process";
+import { amarillo, cyan, rojo, verde } from "./colores.ts";
 import type { Ciudad, Clima, Unidad } from "./tipos.ts";
 
 const ANCHO = 40;
@@ -67,18 +68,21 @@ export function imprimirMenu(
   unidad: Unidad,
 ): void {
   const simboloUnidad = unidad === "celsius" ? "°C" : "°F";
+  const lineas = [
+    SEPARADOR,
+    "         WEATHER CLI",
+    SEPARADOR,
+    "  1. Clima de ciudad default",
+    `  2. Clima de todas las ciudades (${cantidadCiudades})`,
+    "  3. Buscar y agregar ciudad",
+    "  4. Eliminar ciudad",
+    "  5. Establecer ciudad default",
+    `  8. Ajustes (${simboloUnidad})`,
+    "  9. Salir",
+    SEPARADOR,
+  ];
 
-  console.log(SEPARADOR);
-  console.log("         WEATHER CLI");
-  console.log(SEPARADOR);
-  console.log("  1. Clima de ciudad default");
-  console.log(`  2. Clima de todas las ciudades (${cantidadCiudades})`);
-  console.log("  3. Buscar y agregar ciudad");
-  console.log("  4. Eliminar ciudad");
-  console.log("  5. Establecer ciudad default");
-  console.log(`  8. Ajustes (${simboloUnidad})`);
-  console.log("  9. Salir");
-  console.log(SEPARADOR);
+  console.log(cyan(lineas.join("\n")));
 }
 
 export function imprimirCiudades(
@@ -133,15 +137,15 @@ export function mostrarTarjeta(ciudad: Ciudad, clima: Clima): void {
 }
 
 export function aviso(mensaje: string): void {
-  console.log(`  ⚠ ${mensaje}`);
+  console.log(rojo(`  ⚠ ${mensaje}`));
 }
 
 export function exito(mensaje: string): void {
-  console.log(`  ✓ ${mensaje}`);
+  console.log(verde(`  ✓ ${mensaje}`));
 }
 
 export function formatearTemperatura(valor: number, unidad: string): string {
-  return `${valor.toFixed(1).replace(".", ",")} ${unidad}`;
+  return amarillo(`${valor.toFixed(1).replace(".", ",")} ${unidad}`);
 }
 
 export function descripcionClima(codigo: number): string {

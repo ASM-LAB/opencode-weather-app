@@ -46,3 +46,7 @@ Esta es la apariencia que deseamos crear
 ════════════════════════════════════════
   Selecciona una opción: 5
 ```
+
+## Colores
+
+La interfaz usa colores ANSI: menú en cyan, temperaturas en amarillo, mensajes de éxito en verde y avisos o errores en rojo. Se desactivan automáticamente cuando la salida no es una terminal o cuando defines `NO_COLOR`; puedes forzarlos con `FORCE_COLOR=1`.
