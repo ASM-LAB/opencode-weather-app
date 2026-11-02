@@ -1,0 +1,55 @@
+name: Publicar release
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Crear release de Windows
+    runs-on: windows-latest
+
+    steps:
+      - name: Descargar el código
+        uses: actions/checkout@v4
+
+      - name: Instalar Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Instalar dependencias
+        run: bun install --frozen-lockfile
+
+      - name: Obtener versión y comprobar tag
+        id: version
+        shell: bash
+        run: |
+          VERSION=$(bun -e 'console.log(JSON.parse(await Bun.file("package.json").text()).version ?? "")')
+          if [ -z "$VERSION" ]; then
+            echo "package.json no contiene una versión."
+            exit 1
+          fi
+
+          TAG="v$VERSION"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+
+          if git ls-remote --exit-code --tags origin "refs/tags/$TAG" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "El tag $TAG ya existe; se omitirá la publicación."
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Compilar binario
+        if: steps.version.outputs.exists == 'false'
+        run: bun run build
+
+      - name: Crear release y adjuntar binario
+        if: steps.version.outputs.exists == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "${{ steps.version.outputs.tag }}" weather.exe --title "${{ steps.version.outputs.tag }}" --generate-notes --target "${{ github.sha }}"
