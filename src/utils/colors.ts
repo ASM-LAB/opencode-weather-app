@@ -1,5 +1,3 @@
-// Colores ANSI para la interfaz de consola.
-
 function detectarColor(): boolean {
   const forzado = process.env.FORCE_COLOR;
   if (forzado === "0") {

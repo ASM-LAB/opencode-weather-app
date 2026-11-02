@@ -1,8 +1,7 @@
-// Persistencia de la configuración en el directorio home del usuario.
-
 import { homedir } from "node:os";
 import { join } from "node:path";
-import type { Ciudad, Configuracion, Unidad } from "./tipos.ts";
+import type { Ciudad } from "../types/City.ts";
+import type { Configuracion, Unidad } from "../types/Settings.ts";
 
 const RUTA_CONFIG = join(homedir(), ".weather-cli.json");
 
@@ -34,45 +33,6 @@ export async function cargarConfig(): Promise<Configuracion> {
 
 export async function guardarConfig(config: Configuracion): Promise<void> {
   await Bun.write(RUTA_CONFIG, JSON.stringify(config, null, 2));
-}
-
-export function agregarCiudad(config: Configuracion, ciudad: Ciudad): boolean {
-  if (config.ciudades.some((guardada) => guardada.id === ciudad.id)) {
-    return false;
-  }
-
-  config.ciudades.push(ciudad);
-  if (config.ciudadDefaultId === null) {
-    config.ciudadDefaultId = ciudad.id;
-  }
-  return true;
-}
-
-export function eliminarCiudad(config: Configuracion, id: number): boolean {
-  const indice = config.ciudades.findIndex((ciudad) => ciudad.id === id);
-  if (indice === -1) {
-    return false;
-  }
-
-  config.ciudades.splice(indice, 1);
-  if (config.ciudadDefaultId === id) {
-    config.ciudadDefaultId = config.ciudades[0]?.id ?? null;
-  }
-  return true;
-}
-
-export function establecerCiudadDefault(config: Configuracion, id: number): boolean {
-  if (!config.ciudades.some((ciudad) => ciudad.id === id)) {
-    return false;
-  }
-
-  config.ciudadDefaultId = id;
-  return true;
-}
-
-export function cambiarUnidad(config: Configuracion): Unidad {
-  config.unidad = config.unidad === "celsius" ? "fahrenheit" : "celsius";
-  return config.unidad;
 }
 
 function normalizarConfig(datos: Partial<Configuracion>): Configuracion {

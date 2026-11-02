@@ -1,42 +1,9 @@
-// Cliente de las APIs de OpenMeteo: geocodificación, clima actual y pronóstico.
+import { obtenerJson } from "./client.ts";
+import type { Ciudad } from "../types/City.ts";
+import type { Clima, RespuestaForecast } from "../types/Weather.ts";
+import type { Unidad } from "../types/Settings.ts";
 
-import type {
-  Ciudad,
-  Clima,
-  RespuestaForecast,
-  ResultadoGeocoding,
-  Unidad,
-} from "./tipos.ts";
-
-const TIMEOUT_MS = 10_000;
-const URL_GEOCODING = "https://geocoding-api.open-meteo.com/v1/search";
 const URL_FORECAST = "https://api.open-meteo.com/v1/forecast";
-
-interface RespuestaGeocoding {
-  results?: ResultadoGeocoding[];
-}
-
-export async function buscarCiudades(nombre: string): Promise<Ciudad[]> {
-  const parametros = new URLSearchParams({
-    name: nombre.trim(),
-    count: "5",
-    language: "es",
-    format: "json",
-  });
-  const datos = await obtenerJson<RespuestaGeocoding>(
-    `${URL_GEOCODING}?${parametros.toString()}`,
-  );
-
-  return (datos.results ?? []).map((resultado) => ({
-    id: resultado.id,
-    nombre: resultado.name,
-    admin1: resultado.admin1,
-    pais: resultado.country,
-    latitud: resultado.latitude,
-    longitud: resultado.longitude,
-    zonaHoraria: resultado.timezone,
-  }));
-}
 
 export async function obtenerClima(
   ciudad: Ciudad,
@@ -93,16 +60,4 @@ export async function obtenerClima(
       minima: datos.daily?.temperature_2m_min?.[indice + 1] ?? null,
     })),
   };
-}
-
-async function obtenerJson<T>(url: string): Promise<T> {
-  const respuesta = await fetch(url, {
-    signal: AbortSignal.timeout(TIMEOUT_MS),
-  });
-
-  if (!respuesta.ok) {
-    throw new Error(`OpenMeteo respondió con estado ${respuesta.status}.`);
-  }
-
-  return (await respuesta.json()) as T;
 }
